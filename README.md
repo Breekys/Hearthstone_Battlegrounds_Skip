@@ -21,4 +21,6 @@ When you press skip, it enables the rule for 4 seconds and disable it afterwards
 
 You can modify the delay in the config.json file stored in `%APPDATA%/HearthstoneBattlegroundsSkip/` 
 
+The app was written in Python and the executable was created with PyInstaller.
+
 # FAQ
