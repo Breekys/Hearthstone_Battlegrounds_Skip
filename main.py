@@ -2,7 +2,10 @@ import subprocess
 from threading import Timer
 import tkinter as tk
 from tkinter import font
+from tkinter import filedialog
 import json
+import ntpath
+import sys, os
 
 
 def popen(cmd):
@@ -14,20 +17,47 @@ def popen(cmd):
 
 class Example(tk.Frame):
     DISCONNECTED_TIME = 4
+    DEFAULT_CONFIG = {
+        "outbound_rule_name": "HS_Connexion_Blocker",
+        "hearthstone_path": ""
+    }
 
     def __init__(self, parent):
-        # Outbound rule name
-        self.config = json.load(open("config", "r"))
+        # Load config
+        if "config.json" not in os.listdir():
+            json.dump(self.DEFAULT_CONFIG, open("config.json", "w"))
+        self.config = json.load(open("config.json", "r"))
+
+        self.setup()
 
         # VISUAL
         tk.Frame.__init__(self, parent, width=500, height=500)
-
         # button to do disconnect and reconnect afterwards
         helv36 = font.Font(family='Helvetica', size=36, weight='bold')
         self.btn = tk.Button(self, text="SKIP", command=self.skip, width=10, height=1, font=helv36)
-
         # lay the widgets out on the screen.
         self.btn.pack(fill="both")
+
+    def setup(self):
+        if self.config["hearthstone_path"] != "":
+            return
+        # Ask for hearthstone path
+        file_path = filedialog.askopenfilename(title="Select Hearthstone.exe")
+        # If wrong ask again 5 times or exit after
+        attempts = 0
+        while ntpath.basename(file_path) != "Hearthstone.exe":
+            file_path = filedialog.askopenfilename(title="Wrong file, Select Hearthstone.exe")
+            attempts += 1
+            if attempts >= 5:
+                sys.exit(1)
+
+        # Save config
+        self.config["outbound_rule_name"] = self.DEFAULT_CONFIG["outbound_rule_name"]
+        self.config["hearthstone_path"] = file_path
+        json.dump(self.config, open("config.json", "w"))
+
+        # Create rule
+        self.create_rule()
 
     def skip(self):
         self.btn["state"] = "disabled"
@@ -44,6 +74,12 @@ class Example(tk.Frame):
             r.start()
         else:
             self.btn["text"] = "SKIP"
+
+    def create_rule(self):
+        bashCommand = 'netsh advfirewall firewall add rule name="{}" dir=out action=block  program="{}" enable=no'\
+            .format(self.config["outbound_rule_name"],
+                    self.config["hearthstone_path"])
+        popen(bashCommand)
 
     def disconnect(self):
         bashCommand = 'netsh advfirewall firewall set rule name="{}" new enable=yes'.format(self.config["outbound_rule_name"])
