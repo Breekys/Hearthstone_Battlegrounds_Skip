@@ -17,17 +17,21 @@ def popen(cmd):
 
 
 class Example(tk.Frame):
-    DISCONNECTED_TIME = 4
+    APP_NAME = "HearthstoneBattlegroundsSkip"
+    BASE_PATH = os.path.join(os.getenv('APPDATA'), APP_NAME)
     DEFAULT_CONFIG = {
         "outbound_rule_name": "HS Connexion Blocker",
-        "hearthstone_path": ""
+        "hearthstone_path": "",
+        "disconnected_time": 4
     }
 
     def __init__(self, parent):
         # Load config
-        if "config.json" not in os.listdir():
-            json.dump(self.DEFAULT_CONFIG, open("config.json", "w"))
-        self.config = json.load(open("config.json", "r"))
+        if self.APP_NAME not in os.listdir(os.getenv('APPDATA')):
+            os.mkdir(self.BASE_PATH)
+        if "config.json" not in os.listdir(self.BASE_PATH):
+            json.dump(self.DEFAULT_CONFIG, open(os.path.join(self.BASE_PATH, "config.json"), "w"))
+        self.config = json.load(open(os.path.join(self.BASE_PATH, "config.json"), "r"))
 
         self.setup()
 
@@ -41,7 +45,8 @@ class Example(tk.Frame):
 
     def setup(self):
         if self.config["hearthstone_path"] != "":
-            return
+            if "Hearthstone.exe" in os.listdir(os.path.dirname(self.config["hearthstone_path"])):
+                return
         # If wrong ask again 5 times or exit after
         attempts = 0
         file_path = ""
@@ -60,7 +65,7 @@ class Example(tk.Frame):
         # Save config
         self.config["outbound_rule_name"] = self.DEFAULT_CONFIG["outbound_rule_name"]
         self.config["hearthstone_path"] = file_path.replace("/", "\\")
-        json.dump(self.config, open("config.json", "w"))
+        json.dump(self.config, open(os.path.join(self.BASE_PATH, "config.json"), "w"))
 
         # Create rule
         self.create_rule()
@@ -68,9 +73,9 @@ class Example(tk.Frame):
     def skip(self):
         self.btn["state"] = "disabled"
         self.disconnect()
-        r = Timer(Example.DISCONNECTED_TIME, self.connect, args=None, kwargs=None)
+        r = Timer(self.config["disconnected_time"], self.connect, args=None, kwargs=None)
         r.start()
-        self.refresh_visual(Example.DISCONNECTED_TIME)
+        self.refresh_visual(self.config["disconnected_time"])
 
     def refresh_visual(self, s):
         self.btn["text"] = str(int(s))
@@ -98,5 +103,10 @@ class Example(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    # root.iconbitmap('next.ico')
+    try:
+        root.iconbitmap(os.path.join(sys._MEIPASS, "data_files/next.ico"))
+    except AttributeError:
+        root.iconbitmap('data_files/next.ico')
     Example(root).pack(fill="both", expand=True)
     root.mainloop()
