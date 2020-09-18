@@ -1,11 +1,12 @@
-import subprocess
-from threading import Timer
-import tkinter as tk
-from tkinter import font
-from tkinter import filedialog
 import json
 import ntpath
-import sys, os
+import os
+import subprocess
+import sys
+import tkinter as tk
+from threading import Timer
+from tkinter import filedialog
+from tkinter import font
 
 
 def popen(cmd):
