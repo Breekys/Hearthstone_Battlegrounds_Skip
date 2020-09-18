@@ -19,7 +19,7 @@ def popen(cmd):
 class Example(tk.Frame):
     DISCONNECTED_TIME = 4
     DEFAULT_CONFIG = {
-        "outbound_rule_name": "HS_Connexion_Blocker",
+        "outbound_rule_name": "HS Connexion Blocker",
         "hearthstone_path": ""
     }
 
@@ -42,19 +42,24 @@ class Example(tk.Frame):
     def setup(self):
         if self.config["hearthstone_path"] != "":
             return
-        # Ask for hearthstone path
-        file_path = filedialog.askopenfilename(title="Select Hearthstone.exe")
         # If wrong ask again 5 times or exit after
         attempts = 0
+        file_path = ""
         while ntpath.basename(file_path) != "Hearthstone.exe":
-            file_path = filedialog.askopenfilename(title="Wrong file, Select Hearthstone.exe")
+            # Ask for hearthstone path
+            if attempts == 0:
+                file_path = filedialog.askopenfilename(title="Select Hearthstone.exe")
+            else:
+                file_path = filedialog.askopenfilename(title="Wrong file, Select Hearthstone.exe")
+            if file_path == "":
+                sys.exit(1)
             attempts += 1
             if attempts >= 5:
                 sys.exit(1)
 
         # Save config
         self.config["outbound_rule_name"] = self.DEFAULT_CONFIG["outbound_rule_name"]
-        self.config["hearthstone_path"] = file_path
+        self.config["hearthstone_path"] = file_path.replace("/", "\\")
         json.dump(self.config, open("config.json", "w"))
 
         # Create rule
