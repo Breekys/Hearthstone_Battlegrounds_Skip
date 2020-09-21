@@ -1,4 +1,4 @@
-# HSBattlegrounds_Reconnect_Tool
+# Hearthstone Battlegrounds Skip
 
 ### A useful tool to skip battles in Hearthstone Battlegrounds !
 This tool uses an exploit in Hearthstone Battlegrounds to skip battles. It enables you to disconnect and reconnect quickly from the game, so that when you reconnect, you will be in the recruit phase.
