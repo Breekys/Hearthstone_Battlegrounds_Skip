@@ -12,7 +12,8 @@ from tkinter import font
 def popen(cmd):
     startupinfo = subprocess.STARTUPINFO()
     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    process = subprocess.Popen(cmd.split(), startupinfo=startupinfo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    process = subprocess.Popen(cmd.split(), startupinfo=startupinfo, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               stdin=subprocess.PIPE)
     return process.stdout.read()
 
 
@@ -48,14 +49,18 @@ class Example(tk.Frame):
             if "Hearthstone.exe" in os.listdir(os.path.dirname(self.config["hearthstone_path"])):
                 return
         # If wrong ask again 5 times or exit after
+        initialdir = "C:/"
+        if "Hearthstone" in os.listdir("C:/Program Files (x86)/"):
+            initialdir = "C:/Program Files (x86)/Hearthstone"
+
         attempts = 0
         file_path = ""
         while ntpath.basename(file_path) != "Hearthstone.exe":
             # Ask for hearthstone path
             if attempts == 0:
-                file_path = filedialog.askopenfilename(title="Select Hearthstone.exe")
+                file_path = filedialog.askopenfilename(title="Select Hearthstone.exe", initialdir=initialdir)
             else:
-                file_path = filedialog.askopenfilename(title="Wrong file, Select Hearthstone.exe")
+                file_path = filedialog.askopenfilename(title="Wrong file, Select Hearthstone.exe", initialdir=initialdir)
             if file_path == "":
                 sys.exit(1)
             attempts += 1
@@ -87,23 +92,26 @@ class Example(tk.Frame):
             self.btn["text"] = "SKIP"
 
     def create_rule(self):
-        bashCommand = 'netsh advfirewall firewall add rule name="{}" dir=out action=block  program="{}" enable=no'\
+        bashCommand = 'netsh advfirewall firewall add rule name="{}" dir=out action=block  program="{}" enable=no' \
             .format(self.config["outbound_rule_name"],
                     self.config["hearthstone_path"])
         popen(bashCommand)
 
     def disconnect(self):
-        bashCommand = 'netsh advfirewall firewall set rule name="{}" new enable=yes'.format(self.config["outbound_rule_name"])
+        bashCommand = 'netsh advfirewall firewall set rule name="{}" new enable=yes'.format(
+            self.config["outbound_rule_name"])
         popen(bashCommand)
 
     def connect(self):
-        bashCommand = 'netsh advfirewall firewall set rule name="{}" new enable=no'.format(self.config["outbound_rule_name"])
+        bashCommand = 'netsh advfirewall firewall set rule name="{}" new enable=no'.format(
+            self.config["outbound_rule_name"])
         popen(bashCommand)
         self.btn["state"] = "normal"
 
+
 if __name__ == "__main__":
     root = tk.Tk()
-    # root.iconbitmap('next.ico')
+    root.title("Hearthstone Battlegrounds Skip")
     try:
         root.iconbitmap(os.path.join(sys._MEIPASS, "data_files/next.ico"))
     except AttributeError:
