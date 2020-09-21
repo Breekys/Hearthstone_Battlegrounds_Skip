@@ -40,7 +40,7 @@ class Example(tk.Frame):
         tk.Frame.__init__(self, parent, width=500, height=500)
         # button to do disconnect and reconnect afterwards
         helv36 = font.Font(family='Helvetica', size=36, weight='bold')
-        self.btn = tk.Button(self, text="SKIP", command=self.skip, width=10, height=1, font=helv36)
+        self.btn = tk.Button(self, text="SKIP", command=self.skip, width=11, height=1, font=helv36)
         # lay the widgets out on the screen.
         self.btn.pack(fill="both")
 
