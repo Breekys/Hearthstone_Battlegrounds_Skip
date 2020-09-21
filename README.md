@@ -13,7 +13,7 @@ Work only with **Windows**.
 You can also skip when you are already in combat.
 
 If you are not confident by authorizing HSBGSkip.exe, you can build it yourself. The code is in the branch 'development'. Git clone the development branch and either launch skip.py with python, or you can compile it using pyinstaller with this command :  
-`pyinstaller --clean --onefile --noconsole --icon="next.ico" --add-data="data_files/next.ico;data_files" skip.py`
+`pyinstaller --clean --onefile --noconsole --icon="data_files/next.ico" --add-data="data_files/next.ico;data_files" skip.py`
 
 # How it works ?
 When you launch it, it creates an outbound rule in the windows firewall to block hearthstone.exe to send data to the server.
