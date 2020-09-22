@@ -24,3 +24,7 @@ You can modify the delay in the config.json file stored in `%APPDATA%/Hearthston
 The app was written in Python and the executable was created with PyInstaller.
 
 # FAQ
+
+**Q: How to change Hearthstone.exe directory ?**
+
+A: Modify it in the config.json in `%APPDATA%/HearthstoneBattlegroundsSkip/`
